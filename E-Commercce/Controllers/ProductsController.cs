@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.Entities;
+using Core.Interfaces;
+using Infrastructure.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Commercce.Controllers
 {
@@ -7,16 +11,22 @@ namespace E_Commercce.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        [HttpGet]
-        public string GetProduct()
+        private readonly IProductRepository _productRepository;
+
+        public ProductsController(ProductRepository productRepository)
         {
-            return "All Product";
+            _productRepository = productRepository;
+        }
+        [HttpGet]
+        public async Task<IReadOnlyList<Product>> GetProduct()
+        {
+            return await _productRepository.GetProductsAsync();
         }
 
         [HttpGet("{id}")]
-        public string GetProductbyId(int id)
+        public async Task<ActionResult<Product>> GetProductbyId(int id)
         {
-            return "Product with id";
+            return await _productRepository.GetProductByIdAsync(id);
         }
     }
 }
